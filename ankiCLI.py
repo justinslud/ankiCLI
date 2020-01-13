@@ -34,7 +34,7 @@ if args.info:
         print('Deck Size: {}'.format(deckSize))
 
 if args.action == 'add':
-    if args.deck:
+    if args.deck in invoke('deckNames'):
         while True:
             cardFront = input('Front of card: ')
             if cardFront == 'q' or cardFront == 'quit': break
@@ -43,6 +43,13 @@ if args.action == 'add':
             
             print('Confirm add to {0}?'.format(args.deck))
             confirm = input('y/n/f/b: ')
+            while confirm != 'y':
+                if confirm == 'n': break
+                if confirm == 'f': cardFront = input('Front of card: ')
+                elif confirm == 'b': cardBack = input('Back of card: ')
+                print('Confirm add to {0}?'.format(args.deck))
+                confirm = input('y/n/f/b: ')
+
             if confirm == 'y':
                 cardID = invoke('addNote', note= {           
                         "options": {"allowDuplicate": False},
@@ -53,6 +60,8 @@ if args.action == 'add':
                     )
                 
                 print(cardID)
+
+    else: print('{} is not a deck'.format(args.deck))
 
 elif args.action == 'changeVariables':
     if args.deck:
