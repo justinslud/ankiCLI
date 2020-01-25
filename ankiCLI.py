@@ -1,5 +1,6 @@
 from ankiconnectTest import invoke
 import argparse
+import csv
 
 def getDeckInfo(deck):
     if deck not in invoke('deckNames'):
@@ -18,7 +19,7 @@ parser.add_argument('-d', '--deck',
 
 parser.add_argument('-a', '--action', 
                     help='what do you want to do?',
-                    choices=['add','remove', 'changeVariables'])
+                    choices=['add', 'addcsv'])
 
 parser.add_argument('-i', '--info',
                     help='get info on deck(s)',
@@ -62,14 +63,23 @@ if args.action == 'add':
                 print(cardID)
 
     else: print('{} is not a deck'.format(args.deck))
+    
+elif args.action == 'addcsv':
+    if args.deck in invoke('deckNames'):
+        # if csv file in os.path:
+        csv_name = 'C:/Users/sludj/Documents/ankify.csv'
+        with open(csv_name, 'r') as csv_file:
+            csv_reader = csv.reader(csv_file, delimiter=',')
+            #for row in csv_reader: print(row)
+            for front, back in csv_reader:
+                cardID = invoke('addNote', note= {           
+                    "options": {"allowDuplicate": False},
+                    'deckName':args.deck, 'modelName':'Basic',
+                    'fields': {'Front':front, 'Back':back},
+                    'tags':[]
+                    }                       
+                )
+                    
+            print('Successfully added cards.')
+        
 
-elif args.action == 'changeVariables':
-    if args.deck:
-        if args.deck == 'all':
-            pass
-        else:          
-            query = 'deck:'+args.deck
-            cardIDS = invoke('findCards', query=query)
-        for card in invoke('cardsInfo', cards=cardIDS):
-            if '[fmla]' in card['answer'] and '[\fmla]' in card['answer']:
-                pass
