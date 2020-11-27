@@ -21,13 +21,21 @@ parser.add_argument('-a', '--action',
                     help='what do you want to do?',
                     choices=['add', 'addcsv'])
 
+parser.add_argument('-t', '--tag',
+                    help='if adding a csv, assign 1 tag to all cards',
+                    action='store')
+
 parser.add_argument('-i', '--info',
                     help='get info on deck(s)',
-                    action='append')
+                    action='store')
 
 args = parser.parse_args()
 
 if args.info:
+    if args.info == 'all':
+        args.info = invoke('deckNames')
+    else:
+        args.info = [args.info]
     for deck in args.info:
         deckID, deckSize = getDeckInfo(deck)
         print('Deck Name: {}'.format(deck))
@@ -67,7 +75,9 @@ if args.action == 'add':
 elif args.action == 'addcsv':
     if args.deck in invoke('deckNames'):
         # if csv file in os.path:
-        csv_name = 'C:/Users/sludj/Documents/ankify.csv'
+        csv_name = 'C:/Users/sludj/Documents/notes/offline/ankify.csv'
+
+        tags = [args.tag] if args.tag else []
         with open(csv_name, 'r') as csv_file:
             csv_reader = csv.reader(csv_file, delimiter=',')
             #for row in csv_reader: print(row)
@@ -76,10 +86,10 @@ elif args.action == 'addcsv':
                     "options": {"allowDuplicate": False},
                     'deckName':args.deck, 'modelName':'Basic',
                     'fields': {'Front':front, 'Back':back},
-                    'tags':[]
+                    'tags':tags
                     }                       
                 )
-                    
+                print(cardID)
             print('Successfully added cards.')
         
 
