@@ -74,22 +74,43 @@ if args.action == 'add':
     
 elif args.action == 'addcsv':
     if args.deck in invoke('deckNames'):
-        # if csv file in os.path:
-        csv_name = 'C:/Users/sludj/Documents/notes/offline/ankify.csv'
 
         tags = [args.tag] if args.tag else []
-        with open(csv_name, 'r') as csv_file:
-            csv_reader = csv.reader(csv_file, delimiter=',')
-            #for row in csv_reader: print(row)
-            for front, back in csv_reader:
-                cardID = invoke('addNote', note= {           
-                    "options": {"allowDuplicate": False},
-                    'deckName':args.deck, 'modelName':'Basic',
-                    'fields': {'Front':front, 'Back':back},
-                    'tags':tags
-                    }                       
-                )
-                print(cardID)
-            print('Successfully added cards.')
+
+        try:
+            # if csv file in os.path:
+            csv_name = 'C:/Users/sludj/Documents/notes/offline/ankify.csv'
+            
+            with open(csv_name, 'r') as csv_file:
+                csv_reader = csv.reader(csv_file, delimiter=',')
+                #for row in csv_reader: print(row)
+                for front, back in csv_reader:
+                    cardID = invoke('addNote', note= {           
+                        "options": {"allowDuplicate": False},
+                        'deckName':args.deck, 'modelName':'Basic',
+                        'fields': {'Front':front, 'Back':back},
+                        'tags':tags
+                        }                       
+                    )
+                    print(cardID)
+                print('Successfully added cards.')
+
+        except:
+            # if csv file in os.path:
+            txt_name = 'C:/Users/sludj/Documents/notes/offline/ankify.txt'
+
+            with open(txt_name, 'r') as txt_reader:
+                rows = [line.split('\t') for line in txt_reader.readlines()]
+                #for row in csv_reader: print(row)
+                for front, back in rows:
+                    cardID = invoke('addNote', note= {           
+                        "options": {"allowDuplicate": False},
+                        'deckName':args.deck, 'modelName':'Basic',
+                        'fields': {'Front':front, 'Back':back},
+                        'tags':tags
+                        }                       
+                    )
+                    print(cardID)
+                print('Successfully added cards.')
         
 
